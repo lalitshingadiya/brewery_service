@@ -29,7 +29,7 @@ public class Beer {
 
     private String beerName;
 
-    private BeerStyleEnum beerStyle;
+    private String beerStyle;
 
     @Version
     private Integer version;
@@ -46,5 +46,7 @@ public class Beer {
 
     private BigDecimal price;
 
-    private Integer quantityOnHand;
+    private Integer minOnHand;
+
+    private Integer quantityToBrew;
 }

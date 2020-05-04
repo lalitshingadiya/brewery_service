@@ -24,6 +24,7 @@ hs_err_pid*
 
 # Build files
 build/
+target/
 
 # Gralde files
 settings.gradle
