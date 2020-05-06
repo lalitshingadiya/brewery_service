@@ -1,0 +1,51 @@
+Brewery Order Service Docs
+Rest Docs with JUnit 5.
+Beer Order Controller Test makes a call to service and produce three documentation snippets.
+
+GET BEER
+
+One showing how to make a request using cURL:
+
+{snippets}/v1/beer-get/curl-request.adoc
+
+One showing the HTTP request:
+
+{snippets}/v1/beer-get/http-request.adoc
+
+And One showing the HTTP response:
+
+{snippets}/v1/beer-get/http-response.adoc
+
+Response Body:
+
+{snippets}/v1/beer-get/response-body.adoc
+
+Response fields:
+
+{snippets}/v1/beer-get/response-fields.adoc
+
+NEW BEER
+
+One showing how to make a request using cURL:
+
+{snippets}/v1/beer-new/curl-request.adoc
+
+One showing the HTTP request:
+
+{snippets}/v1/beer-new/http-request.adoc
+
+And One showing the HTTP response:
+
+{snippets}/v1/beer-new/http-response.adoc
+
+Response Body:
+
+{snippets}/v1/beer-new/response-body.adoc
+
+Request Fields
+
+{snippets}/v1/beer-new/request-fields.adoc
+
+Response fields:
+
+include::{snippets}

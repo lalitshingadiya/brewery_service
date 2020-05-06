@@ -13,8 +13,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
+
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
@@ -60,9 +67,26 @@ class BeerControllerTest {
         Mockito.when(beerService.findByID(Mockito.any())).thenReturn(validBeerDto());
 
         mockMvc.perform(
-            get(BeerController.BASE_URL+"/"+ UUID.randomUUID())
-            .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk());
+            get(BeerController.BASE_URL+"/{beerId}", UUID.randomUUID())
+                .param("test","test")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(document("v1/beer-get",
+                    pathParameters(
+                            parameterWithName("beerId").description("UUID of a beer you want to get.")
+                    ),
+                    responseFields(
+                            fieldWithPath("id").ignored(),
+                            fieldWithPath("beerName").description("Name of the beer"),
+                            fieldWithPath("beerStyle").description("Style of the beer"),
+                            fieldWithPath("version").ignored(),
+                            fieldWithPath("createdDate").ignored(),
+                            fieldWithPath("lastModifiedDate").ignored(),
+                            fieldWithPath("upc").description("UPC of the beer"),
+                            fieldWithPath("price").description("Price of the beer"),
+                            fieldWithPath("quantityOnHand").description("Quantity on hand")
+                    )
+            ));
     }
 
 
@@ -74,7 +98,19 @@ class BeerControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(validBeerDto())))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andDo(document("v1/beer-new",
+                        requestFields(
+                                fieldWithPath("id").ignored(),
+                                fieldWithPath("beerName").description("Name of the beer"),
+                                fieldWithPath("beerStyle").description("Style of the beer"),
+                                fieldWithPath("version").ignored(),
+                                fieldWithPath("createdDate").ignored(),
+                                fieldWithPath("lastModifiedDate").ignored(),
+                                fieldWithPath("upc").description("UPC of the beer"),
+                                fieldWithPath("price").description("Price of the beer"),
+                                fieldWithPath("quantityOnHand").description("Quantity on hand")
+                        )));
     }
 
     @Test
