@@ -20,7 +20,12 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+
+import org.springframework.restdocs.constraints.ConstraintDescriptions;
+import org.springframework.restdocs.payload.FieldDescriptor;
+import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.StringUtils;
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -93,6 +98,9 @@ class BeerControllerTest {
 
     @Test
     void saveNewBeer() throws Exception {
+
+        ConstrainedFields fields = new ConstrainedFields(BeerDto.class);
+
         mockMvc.perform(
             post(BeerController.BASE_URL)
                 .accept(MediaType.APPLICATION_JSON)
@@ -100,6 +108,37 @@ class BeerControllerTest {
                 .content(objectMapper.writeValueAsString(validBeerDto())))
                 .andExpect(status().isCreated())
                 .andDo(document("v1/beer-new",
+                        requestFields(
+                                fields.withPath("id").ignored(),
+                                fields.withPath("beerName").description("Name of the beer"),
+                                fields.withPath("beerStyle").description("Style of the beer"),
+                                fields.withPath("version").ignored(),
+                                fields.withPath("createdDate").ignored(),
+                                fields.withPath("lastModifiedDate").ignored(),
+                                fieldWithPath("upc").attributes(Attributes.key("constraints").value(StringUtils
+                                        .collectionToDelimitedString(new ConstraintDescriptions(BeerDto.class)
+                                                .descriptionsForProperty("upc"), ". ")))
+                                        .description("UPC of the beer"),
+                                fields.withPath("price").description("Price of the beer"),
+                                fields.withPath("quantityOnHand").description("Quantity on hand")
+                        )));
+    }
+
+    @Test
+    void updateBeer() throws Exception {
+
+        Mockito.when(beerService.findByID(Mockito.any())).thenReturn(validBeerDto());
+
+        mockMvc.perform(
+                put(BeerController.BASE_URL+"/{beerId}",UUID.randomUUID())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validBeerDto())))
+                .andExpect(status().isNoContent())
+                .andDo(document("v1/beer-update",
+                        pathParameters(
+                            parameterWithName("beerId").description("Id of a beer you want.")
+                        ),
                         requestFields(
                                 fieldWithPath("id").ignored(),
                                 fieldWithPath("beerName").description("Name of the beer"),
@@ -110,20 +149,7 @@ class BeerControllerTest {
                                 fieldWithPath("upc").description("UPC of the beer"),
                                 fieldWithPath("price").description("Price of the beer"),
                                 fieldWithPath("quantityOnHand").description("Quantity on hand")
-                        )));
-    }
-
-    @Test
-    void updateBeer() throws Exception {
-
-        Mockito.when(beerService.findByID(Mockito.any())).thenReturn(validBeerDto());
-
-        mockMvc.perform(
-                put(BeerController.BASE_URL+"/"+ UUID.randomUUID())
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(validBeerDto())))
-                .andExpect(status().isNoContent());
+                        )));;
     }
 
     private List<BeerDto> listAll() {
@@ -153,5 +179,19 @@ class BeerControllerTest {
                 .price(new BigDecimal("11.50"))
                 .upc(BEER_1_UPC)
                 .build();
+    }
+
+    private static class ConstrainedFields {
+        private final ConstraintDescriptions constraintDescriptions;
+
+        ConstrainedFields(Class<?> input) {
+            this.constraintDescriptions = new ConstraintDescriptions(input);
+        }
+
+        private FieldDescriptor withPath(String path) {
+            return fieldWithPath(path).attributes(Attributes.key("constraints").value(StringUtils
+                    .collectionToDelimitedString(this.constraintDescriptions
+                            .descriptionsForProperty(path), ". ")));
+        }
     }
 }
