@@ -1,5 +1,6 @@
 package com.lds.brewery_service.web;
 
+import com.lds.brewery_service.web.controller.NotFoundException;
 import com.lds.brewery_service.web.entity.Beer;
 import com.lds.brewery_service.web.mapper.BeerMapper;
 import com.lds.brewery_service.web.model.BeerDto;
@@ -8,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -32,12 +32,7 @@ public class BeerService {
     }
 
     public BeerDto findByID(UUID beerId) {
-        BeerDto beerDto = null;
-        Optional<Beer> optionalBeer = beerRepository.findById(beerId);
-        if(optionalBeer.isPresent()){
-            beerDto = beerMapper.beerToBeerDto(optionalBeer.get());
-        }
-        return beerDto;
+        return beerMapper.beerToBeerDto(beerRepository.findById(beerId).orElseThrow(NotFoundException::new));
     }
 
     public BeerDto saveNewBeer(BeerDto beerDto) {
@@ -46,11 +41,12 @@ public class BeerService {
     }
 
     public BeerDto updateBeer(UUID beerId, BeerDto beerDto) {
-        Optional<Beer> optionalBeer  = beerRepository.findById(beerId);
-        if(optionalBeer.isPresent()){
-            beerDto.setId(optionalBeer.get().getId());
-            beerRepository.save(beerMapper.beerDtoToBeer(beerDto));
-        }
-        return beerDto;
+        Beer beer = beerRepository.findById(beerId).orElseThrow(NotFoundException::new);
+        beer.setBeerName(beerDto.getBeerName());
+        beer.setBeerStyle(beerDto.getBeerStyle().name());
+        beer.setPrice(beerDto.getPrice());
+        beer.setUpc(beerDto.getUpc());
+        beer.setMinOnHand(beerDto.getQuantityOnHand());
+        return beerMapper.beerToBeerDto(beerRepository.save(beer));
     }
 }

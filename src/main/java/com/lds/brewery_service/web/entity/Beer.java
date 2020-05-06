@@ -1,6 +1,5 @@
 package com.lds.brewery_service.web.entity;
 
-import com.lds.brewery_service.web.model.BeerStyleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

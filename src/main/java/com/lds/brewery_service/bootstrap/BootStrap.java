@@ -2,7 +2,6 @@ package com.lds.brewery_service.bootstrap;
 
 import com.lds.brewery_service.web.entity.Beer;
 import com.lds.brewery_service.web.repository.BeerRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -14,8 +13,8 @@ public class BootStrap implements CommandLineRunner {
     private final BeerRepository beerRepository;
 
     public static final String BEER_1_UPC = "123123123123";
-    public static final String BEER_2_UPC = "063123456789";
-    public static final String BEER_3_UPC = "063123456608";
+    public static final String BEER_2_UPC = "073785456888";
+    public static final String BEER_3_UPC = "763487556709";
 
     public BootStrap(BeerRepository beerRepository) {
         this.beerRepository = beerRepository;
