@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.UUID;
 
 @ExtendWith(RestDocumentationExtension.class)
-@AutoConfigureRestDocs
+@AutoConfigureRestDocs(uriScheme="https",uriHost = "dev.springbylalit.org",uriPort = 8078)
 @WebMvcTest(BeerController.class)
 class BeerControllerTest {
 
@@ -115,10 +115,7 @@ class BeerControllerTest {
                                 fields.withPath("version").ignored(),
                                 fields.withPath("createdDate").ignored(),
                                 fields.withPath("lastModifiedDate").ignored(),
-                                fieldWithPath("upc").attributes(Attributes.key("constraints").value(StringUtils
-                                        .collectionToDelimitedString(new ConstraintDescriptions(BeerDto.class)
-                                                .descriptionsForProperty("upc"), ". ")))
-                                        .description("UPC of the beer"),
+                                fields.withPath("upc").description("UPC of the beer"),
                                 fields.withPath("price").description("Price of the beer"),
                                 fields.withPath("quantityOnHand").description("Quantity on hand")
                         )));
@@ -128,6 +125,8 @@ class BeerControllerTest {
     void updateBeer() throws Exception {
 
         Mockito.when(beerService.findByID(Mockito.any())).thenReturn(validBeerDto());
+
+        ConstrainedFields fields = new ConstrainedFields(BeerDto.class);
 
         mockMvc.perform(
                 put(BeerController.BASE_URL+"/{beerId}",UUID.randomUUID())
@@ -140,15 +139,15 @@ class BeerControllerTest {
                             parameterWithName("beerId").description("Id of a beer you want.")
                         ),
                         requestFields(
-                                fieldWithPath("id").ignored(),
-                                fieldWithPath("beerName").description("Name of the beer"),
-                                fieldWithPath("beerStyle").description("Style of the beer"),
-                                fieldWithPath("version").ignored(),
-                                fieldWithPath("createdDate").ignored(),
-                                fieldWithPath("lastModifiedDate").ignored(),
-                                fieldWithPath("upc").description("UPC of the beer"),
-                                fieldWithPath("price").description("Price of the beer"),
-                                fieldWithPath("quantityOnHand").description("Quantity on hand")
+                                fields.withPath("id").ignored(),
+                                fields.withPath("beerName").description("Name of the beer"),
+                                fields.withPath("beerStyle").description("Style of the beer"),
+                                fields.withPath("version").ignored(),
+                                fields.withPath("createdDate").ignored(),
+                                fields.withPath("lastModifiedDate").ignored(),
+                                fields.withPath("upc").description("UPC of the beer"),
+                                fields.withPath("price").description("Price of the beer"),
+                                fields.withPath("quantityOnHand").description("Quantity on hand")
                         )));;
     }
 
