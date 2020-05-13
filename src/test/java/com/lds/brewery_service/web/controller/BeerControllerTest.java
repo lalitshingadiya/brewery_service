@@ -1,7 +1,7 @@
 package com.lds.brewery_service.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lds.brewery_service.web.BeerService;
+import com.lds.brewery_service.web.service.BeerService;
 import com.lds.brewery_service.web.model.BeerDto;
 import com.lds.brewery_service.web.model.BeerStyleEnum;
 import org.junit.jupiter.api.Test;
@@ -69,7 +69,7 @@ class BeerControllerTest {
     @Test
     void getBeer() throws Exception {
 
-        Mockito.when(beerService.findByID(Mockito.any())).thenReturn(validBeerDto());
+        Mockito.when(beerService.findByID(Mockito.any(),Mockito.anyBoolean())).thenReturn(validBeerDto());
 
         mockMvc.perform(
             get(BeerController.BASE_URL+"/{beerId}", UUID.randomUUID())
@@ -124,7 +124,7 @@ class BeerControllerTest {
     @Test
     void updateBeer() throws Exception {
 
-        Mockito.when(beerService.findByID(Mockito.any())).thenReturn(validBeerDto());
+        Mockito.when(beerService.findByID(Mockito.any(),Mockito.anyBoolean())).thenReturn(validBeerDto());
 
         ConstrainedFields fields = new ConstrainedFields(BeerDto.class);
 
